@@ -10,8 +10,9 @@ function createWindow () {
   })
 
   win.loadFile('index.html')
-  // uncomment to have devtools on startup
-  // win.webContents.openDevTools()
+  if (process.env.DEBUG === "true") {
+    win.webContents.openDevTools()
+  }
 }
 
 app.whenReady().then(createWindow)
