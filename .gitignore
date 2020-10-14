@@ -1,5 +1,9 @@
 node_modules/
 
 out/
+dist/
 
 .DS_Store
+
+# the .idea is ignore intentionally for personal reason
+.idea

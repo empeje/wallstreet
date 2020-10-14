@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron')
+const { DEBUG, RUNTIME } = require('./config')
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -9,13 +10,13 @@ function createWindow () {
     }
   })
 
-  if (process.env.RUNTIME === "elm") {
-    win.loadFile('index.elm.html')
+  if (RUNTIME === "elm") {
+    win.loadFile('./dist/elm/index.html')
   } else {
-    win.loadFile('index.js.html')
+    win.loadFile('./dist/js/index.html')
   }
 
-  if (process.env.DEBUG === "true") {
+  if (DEBUG === "true") {
     win.webContents.openDevTools()
   }
 }
