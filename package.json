@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "start:ws:docker": "docker run -p 5001:5001 -p 5002:5002 -it -v $PWD/ws-server:/app ubuntu bash -c \"/app/run_ws-server.sh 5001 5002\"",
+    "start:ws": "./ws-server/run_ws-server.sh 5001 5002"
   },
   "repository": {
     "type": "git",
