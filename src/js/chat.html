@@ -5,8 +5,19 @@
   <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body>
-<div class="container">
-  <span>Chat</span>
-</div>
+<section>
+  <div class="container">
+    <p>
+        Connection: <span id="connection-status"></span>
+      </p>
+      <p>
+        Username: <span id="username"></span>
+      </p>
+      <p>
+        Port: <span id="port"></span>
+      </p>
+  </div>
+  <div id="chatbox" class="container"></div>
+</section>
 </body>
 </html>
