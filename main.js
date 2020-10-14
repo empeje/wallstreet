@@ -9,7 +9,12 @@ function createWindow () {
     }
   })
 
-  win.loadFile('index.html')
+  if (process.env.RUNTIME === "elm") {
+    win.loadFile('index.elm.html')
+  } else {
+    win.loadFile('index.js.html')
+  }
+
   if (process.env.DEBUG === "true") {
     win.webContents.openDevTools()
   }
