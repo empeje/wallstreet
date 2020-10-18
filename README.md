@@ -1,4 +1,7 @@
 # wallstreet
+[![Made in Indonesia](https://made-in-indonesia.github.io/made-in-indonesia.svg)](https://github.com/made-in-indonesia/made-in-indonesia)
+[![Build Status](https://travis-ci.org/empeje/wallstreet.svg?branch=main)](https://travis-ci.org/empeje/wallstreet)
+
 Wallstreet is a websocket app
 
 ## Prerequisites for Development
