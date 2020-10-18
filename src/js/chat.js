@@ -20,7 +20,8 @@ webSocket.onopen = () => {
 }
 
 webSocket.onerror = () => {
-  connectionElement.innerText = "Error"
+  const errorMessage = encodeURIComponent(`Error when connecting to the websocket on port ${port}`)
+  window.location.href = `index.html?flash=${errorMessage}`
 }
 
 webSocket.onclose = () => {
