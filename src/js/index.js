@@ -1,11 +1,11 @@
-import './common'
+import './common';
 
 const urlParams = new URLSearchParams(window.location.search);
-const flash = urlParams.get("flash")
+const flash = urlParams.get('flash');
 
 if (flash) {
-  const flashComponent = document.getElementById("flash")
+  const flashComponent = document.getElementById('flash');
 
-  flashComponent.innerText = flash
-  flashComponent.style.display = "";
+  flashComponent.innerText = flash;
+  flashComponent.style.display = '';
 }

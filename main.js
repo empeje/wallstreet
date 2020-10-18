@@ -1,37 +1,37 @@
-const { app, BrowserWindow } = require('electron')
-const { DEBUG, RUNTIME } = require('./config')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { app, BrowserWindow } = require('electron');
+const { DEBUG, RUNTIME } = require('./config');
 
-function createWindow () {
+function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
-    }
-  })
+      nodeIntegration: true,
+    },
+  });
 
-  if (RUNTIME === "elm") {
-    win.loadFile('./dist/elm/index.html')
+  if (RUNTIME === 'elm') {
+    win.loadFile('./dist/elm/index.html');
   } else {
-    win.loadFile('./dist/js/index.html')
+    win.loadFile('./dist/js/index.html');
   }
 
-  if (DEBUG === "true") {
-    win.webContents.openDevTools()
+  if (DEBUG === 'true') {
+    win.webContents.openDevTools();
   }
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
+});
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
+    createWindow();
   }
-})
-
+});
