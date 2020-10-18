@@ -5,8 +5,8 @@ const urlParams = new URLSearchParams(window.location.search);
 const username = urlParams.get('username');
 const port = urlParams.get('port');
 
-const usernameElement = document.getElementById('username') || {}; // TODO: Fix this
-const portElement = document.getElementById('port') || {}; // TODO: Fix this
+const usernameElement = document.getElementById('username');
+const portElement = document.getElementById('port');
 const connectionElement = document.getElementById('connection-status');
 const chatboxElement = document.getElementById('chatbox') || {}; // TODO: Fix this
 

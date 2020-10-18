@@ -10,11 +10,13 @@
         <div class="row">
           <div class="col-lg-12">
             <div class="ibox chat-view">
-              <div class="ibox-title">
-                <small id="connection-status" class="pull-right text-muted"
+              <div class="ibox-title text-muted">
+                <small id="connection-status" class="pull-right"
                   >Last message: Mon Jan 26 2015 - 18:39:23</small
                 >
-                Chat room panel
+                (<span id="username"></span> |
+                <a class="text-info" href="index.html">Logout</a>) Chat room
+                panel
               </div>
               <div class="ibox-content">
                 <div class="row">
@@ -223,6 +225,9 @@
                     </div>
                   </div>
                 </div>
+              </div>
+              <div class="ibox-footer text-muted">
+                <p>Chat client listening on port <span id="port"></span></p>
               </div>
             </div>
           </div>
