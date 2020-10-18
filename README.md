@@ -4,6 +4,8 @@
 
 Wallstreet is a websocket app
 
+![Screenshot of Ngecilin in action](./docs/login.png)
+
 ## Prerequisites for Development
 
 1. Docker Installed (If not in Linux environment)
