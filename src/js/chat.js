@@ -1,6 +1,8 @@
 import './common';
 import incomingMessageTemplate from './templates/incomingMsg.hbs';
+import outgoingMessageTemplate from './templates/outgoingMsg.hbs';
 import incomingUserAvatar from '../images/avatar1.png';
+import outgoingUserAvatar from '../images/avatar2.png';
 import chatUserTemplate from './templates/chatUser.hbs';
 import User from './models/user';
 
@@ -14,12 +16,39 @@ const portElement = document.getElementById('port');
 const connectionElement = document.getElementById('connection-status');
 const chatboxElement = document.getElementById('chatbox');
 const usersListElement = document.getElementById('users-list');
+const newMessageElement = document.getElementById('new-message');
 
 usernameElement.innerText = username;
 portElement.innerText = port;
 
 const connect = () => {
   const webSocket = new WebSocket(`ws://localhost:${port}`);
+
+  newMessageElement.onkeypress = (e) => {
+    const key = e.keyCode;
+    const ENTER_KEY_NUMBER = 13;
+    const content = newMessageElement.value;
+
+    if (key === ENTER_KEY_NUMBER) {
+      chatboxElement.insertAdjacentHTML(
+        'beforeend',
+        outgoingMessageTemplate({
+          avatar: outgoingUserAvatar,
+          username,
+          dateString: new Date().toLocaleString(),
+          message: content,
+        }),
+      );
+      chatboxElement.scrollTop = chatboxElement.scrollHeight;
+
+      const message = JSON.stringify({ content, username });
+
+      webSocket.send(message);
+      newMessageElement.value = '';
+      return false;
+    }
+    return true;
+  };
 
   webSocket.onopen = () => {
     localStorage.setItem('loggedIn', 'true');
@@ -45,11 +74,13 @@ const connect = () => {
   };
 
   webSocket.onmessage = (event) => {
-    const { user, content } = JSON.parse(event.data);
-    if (!User.exists(user)) {
+    const { username: newUsername, content } = JSON.parse(event.data);
+    if (!User.exists(newUsername)) {
+      const user = new User(newUsername);
+      user.save();
       usersListElement.insertAdjacentHTML(
         'beforeend',
-        chatUserTemplate({ avatar: incomingUserAvatar, username: user }),
+        chatUserTemplate({ avatar: incomingUserAvatar, newUsername }),
       );
     }
 
@@ -57,7 +88,7 @@ const connect = () => {
       'beforeend',
       incomingMessageTemplate({
         avatar: incomingUserAvatar,
-        username: user,
+        username: newUsername,
         dateString: new Date().toLocaleString(),
         message: content,
       }),
