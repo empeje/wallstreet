@@ -75,7 +75,7 @@ const elmConfig = {
     }),
     new HtmlWebpackPlugin({
       title: 'Wallstreet JS Client - Chat',
-      template: './src/js/chat.html',
+      template: './src/elm/chat.html',
       inject: true,
       chunks: ['chat'],
       filename: 'chat.html',

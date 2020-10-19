@@ -1,36 +1,10 @@
 module Main exposing (main)
 
-import Browser
 import Html exposing (Html, button, div, form, h5, input, label, section, text)
 import Html.Attributes exposing (action, attribute, class, for, id, method, name, placeholder, type_)
 
 
-type alias Model =
-    { count : Int }
-
-
-initialModel : Model
-initialModel =
-    { count = 0 }
-
-
-type Msg
-    = Increment
-    | Decrement
-
-
-update : Msg -> Model -> Model
-update msg model =
-    case msg of
-        Increment ->
-            { model | count = model.count + 1 }
-
-        Decrement ->
-            { model | count = model.count - 1 }
-
-
-view : Model -> Html Msg
-view model =
+main =
     section [ class "login" ]
         [ div [ class "container" ]
             [ div [ class "alert alert-danger", id "flash", attribute "role" "alert", attribute "style" "display: none" ]
@@ -63,12 +37,3 @@ view model =
                 ]
             ]
         ]
-
-
-main : Program () Model Msg
-main =
-    Browser.sandbox
-        { init = initialModel
-        , view = view
-        , update = update
-        }
