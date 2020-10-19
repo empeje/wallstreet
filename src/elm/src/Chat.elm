@@ -1,32 +1,41 @@
-module Chat exposing (main)
+port module Chat exposing (locationSearch, main)
 
 import Browser
 import Html exposing (Html, a, button, div, p, section, small, span, text, textarea)
 import Html.Attributes exposing (class, href, id, name, placeholder)
 
 
+port locationSearch : (String -> msg) -> Sub msg
+
+
 type alias Model =
-    { count : Int }
+    { queryParams : String, count : Int }
 
 
-initialModel : Model
-initialModel =
-    { count = 0 }
+init : () -> ( Model, Cmd Msg )
+init flags =
+    ( { queryParams = "", count = 0 }
+    , Cmd.none
+    )
 
 
 type Msg
     = Increment
     | Decrement
+    | LocationSearch String
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Increment ->
-            { model | count = model.count + 1 }
+            ( { model | count = model.count + 1 }, Cmd.none )
 
         Decrement ->
-            { model | count = model.count - 1 }
+            ( { model | count = model.count - 1 }, Cmd.none )
+
+        LocationSearch string ->
+            ( { model | queryParams = string }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -41,7 +50,7 @@ view model =
                                 [ text "Checking connection..." ]
                             , text "("
                             , span [ id "username" ]
-                                []
+                                [ text model.queryParams ]
                             , text " | "
                             , a [ class "text-info", href "index.html" ]
                                 [ text "Logout" ]
@@ -85,10 +94,16 @@ view model =
         ]
 
 
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    locationSearch LocationSearch
+
+
 main : Program () Model Msg
 main =
-    Browser.sandbox
-        { init = initialModel
+    Browser.element
+        { init = init
         , view = view
         , update = update
+        , subscriptions = subscriptions
         }

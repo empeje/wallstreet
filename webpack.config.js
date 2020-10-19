@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const { merge } = require('webpack-merge');
-const { RUNTIME } = require('./config');
+const { RUNTIME, DEBUG } = require('./config');
 const elmSource = __dirname + '/src/elm';
 
 const commonConfig = {
@@ -40,6 +40,7 @@ const commonConfig = {
 };
 
 const elmConfig = {
+  mode: DEBUG === 'true' ? 'development' : 'production',
   entry: {
     index: './src/elm/index.js',
     chat: './src/elm/chat.js',
@@ -55,6 +56,7 @@ const elmConfig = {
         use: {
           loader: 'elm-webpack-loader',
           options: {
+            debug: DEBUG === 'true',
             cwd: elmSource,
             files: [
               path.resolve(__dirname, 'src/elm/src/Main.elm'),
