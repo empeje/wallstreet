@@ -7,3 +7,5 @@ dist/
 
 # the .idea is ignore intentionally for personal reason
 .idea
+
+**/**/elm-stuff/

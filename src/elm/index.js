@@ -1,3 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.css';
-// Put any other imports below so that CSS from your
-// components takes precedence over default styles.
+import './common';
+import { Elm } from './src/Main.elm';
+
+Elm.Main.init({ node: document.getElementById('main') });

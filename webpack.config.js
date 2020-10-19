@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const { merge } = require('webpack-merge');
 const { RUNTIME } = require('./config');
+const elmSource = __dirname + '/src/elm';
 
 const commonConfig = {
   module: {
@@ -39,14 +40,45 @@ const commonConfig = {
 };
 
 const elmConfig = {
-  entry: './src/elm/index.js',
+  entry: {
+    index: './src/elm/index.js',
+    chat: './src/elm/chat.js',
+  },
   output: {
     path: path.resolve(__dirname, './dist/elm'),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.elm$/,
+        exclude: [/elm-stuff/, /node_modules/],
+        use: {
+          loader: 'elm-webpack-loader',
+          options: {
+            cwd: elmSource,
+            files: [
+              path.resolve(__dirname, 'src/elm/src/Main.elm'),
+              path.resolve(__dirname, 'src/elm/src/Chat.elm'),
+            ],
+          },
+        },
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Wallstreet Elm Client',
       template: './src/elm/index.html',
+      inject: true,
+      chunks: ['index'],
+      filename: 'index.html',
+    }),
+    new HtmlWebpackPlugin({
+      title: 'Wallstreet JS Client - Chat',
+      template: './src/js/chat.html',
+      inject: true,
+      chunks: ['chat'],
+      filename: 'chat.html',
     }),
   ],
 };
