@@ -5,6 +5,7 @@ import incomingUserAvatar from '../images/avatar1.png';
 import outgoingUserAvatar from '../images/avatar2.png';
 import chatUserTemplate from './templates/chatUser.hbs';
 import User from './models/user';
+import beep from '../lib/beep';
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -74,13 +75,17 @@ const connect = () => {
   };
 
   webSocket.onmessage = (event) => {
+    beep();
     const { username: newUsername, content } = JSON.parse(event.data);
     if (!User.exists(newUsername)) {
       const user = new User(newUsername);
       user.save();
+    }
+
+    if (!usersListElement.innerText.trim().includes(newUsername)) {
       usersListElement.insertAdjacentHTML(
         'beforeend',
-        chatUserTemplate({ avatar: incomingUserAvatar, newUsername }),
+        chatUserTemplate({ avatar: incomingUserAvatar, username: newUsername }),
       );
     }
 
