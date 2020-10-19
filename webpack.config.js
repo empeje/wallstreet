@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 const { merge } = require('webpack-merge');
-const { RUNTIME } = require('./config')
+const { RUNTIME } = require('./config');
 
 const commonConfig = {
   module: {
@@ -11,20 +11,32 @@ const commonConfig = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
+      {
+        test: /\.hbs$/,
+        loader: 'handlebars-loader',
+      },
+      {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
         use: [
           {
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
-              outputPath: 'fonts/'
-            }
-          }
-        ]
-      }
+              outputPath: 'fonts/',
+            },
+          },
+        ],
+      },
     ],
   },
-}
+};
 
 const elmConfig = {
   entry: './src/elm/index.js',
@@ -34,9 +46,9 @@ const elmConfig = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Wallstreet Elm Client',
-      template: './src/elm/index.html'
-    })
-  ]
+      template: './src/elm/index.html',
+    }),
+  ],
 };
 
 const jsConfig = {
@@ -53,19 +65,18 @@ const jsConfig = {
       template: './src/js/index.html',
       inject: true,
       chunks: ['index'],
-      filename: 'index.html'
+      filename: 'index.html',
     }),
     new HtmlWebpackPlugin({
       title: 'Wallstreet JS Client - Chat',
       template: './src/js/chat.html',
       inject: true,
       chunks: ['chat'],
-      filename: 'chat.html'
+      filename: 'chat.html',
     }),
-  ]
+  ],
 };
 
-const activeConfig = RUNTIME === "elm" ? elmConfig : jsConfig;
-
+const activeConfig = RUNTIME === 'elm' ? elmConfig : jsConfig;
 
 module.exports = merge(commonConfig, activeConfig);

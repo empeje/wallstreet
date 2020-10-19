@@ -1,4 +1,6 @@
 import './common';
+import incomingMessageTemplate from './templates/incomingMsg.hbs';
+import incomingUserAvatar from '../images/avatar1.png';
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -8,7 +10,7 @@ const port = urlParams.get('port');
 const usernameElement = document.getElementById('username');
 const portElement = document.getElementById('port');
 const connectionElement = document.getElementById('connection-status');
-const chatboxElement = document.getElementById('chatbox') || {}; // TODO: Fix this
+const chatboxElement = document.getElementById('chatbox');
 
 usernameElement.innerText = username;
 portElement.innerText = port;
@@ -40,10 +42,18 @@ const connect = () => {
   };
 
   webSocket.onmessage = (event) => {
-    const newMessage = document.createElement('p');
     const { user, content } = JSON.parse(event.data);
-    newMessage.innerText = `${user} said ${content}`;
-    chatboxElement.appendChild(newMessage);
+    chatboxElement.insertAdjacentHTML(
+      'beforeend',
+      incomingMessageTemplate({
+        avatar: incomingUserAvatar,
+        username: user,
+        dateString: new Date().toLocaleString(),
+        message: content,
+      }),
+    );
+
+    chatboxElement.scrollTop = chatboxElement.scrollHeight;
   };
 };
 

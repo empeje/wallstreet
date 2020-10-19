@@ -60,7 +60,9 @@
   display: block;
   width: 100%;
   margin-bottom: 0;
-  /* Override default `<label>` margin */
+  /* Override default `
+<label></label>
+` margin */
   line-height: 1.5;
   color: #495057;
   border: 1px solid transparent;
@@ -140,6 +142,7 @@
 
 .chat {
   height: 100vh;
+  overflow: hidden;
 }
 
 @media (min-width: 768px) {
@@ -257,7 +260,7 @@
   display: none;
 }
 .ibox.collapsed .fa.fa-chevron-up:before {
-  content: "\f078";
+  content: "\\f078";
 }
 .ibox.collapsed .fa.fa-chevron-down:before {
   content: "\f077";
