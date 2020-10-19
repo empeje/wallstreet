@@ -1,13 +1,22 @@
 _test_scripts: &_test_scripts
   script:
-    - yarn global add elm elm-format elm-test
     - yarn build
+
+_test_scripts_elm: &_test_scripts_elm
+  before_script:
+    - yarn global add elm elm-format elm-test
+  script:
+    - env RUNTIME=elm yarn build
 
 cache:
   yarn: true
   directories:
     - node_modules
 
+jobs:
+  include:
+    - script: *_test_scripts
+    - script: *_test_scripts_elm
+
 language: node_js
 node_js: '10'
-<<: *_test_scripts
