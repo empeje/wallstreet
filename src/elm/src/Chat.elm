@@ -1,20 +1,23 @@
-port module Chat exposing (locationSearch, main)
+port module Chat exposing (activePort, main, username)
 
 import Browser
-import Html exposing (Html, a, button, div, p, section, small, span, text, textarea)
+import Html exposing (Html, a, div, p, section, small, span, text, textarea)
 import Html.Attributes exposing (class, href, id, name, placeholder)
 
 
-port locationSearch : (String -> msg) -> Sub msg
+port activePort : (String -> msg) -> Sub msg
+
+
+port username : (String -> msg) -> Sub msg
 
 
 type alias Model =
-    { queryParams : String, count : Int }
+    { activePort : String, username : String, count : Int }
 
 
 init : () -> ( Model, Cmd Msg )
 init flags =
-    ( { queryParams = "", count = 0 }
+    ( { activePort = "", username = "", count = 0 }
     , Cmd.none
     )
 
@@ -22,7 +25,8 @@ init flags =
 type Msg
     = Increment
     | Decrement
-    | LocationSearch String
+    | ActivePort String
+    | Username String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -34,8 +38,11 @@ update msg model =
         Decrement ->
             ( { model | count = model.count - 1 }, Cmd.none )
 
-        LocationSearch string ->
-            ( { model | queryParams = string }, Cmd.none )
+        ActivePort val ->
+            ( { model | activePort = val }, Cmd.none )
+
+        Username val ->
+            ( { model | username = val }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -50,7 +57,7 @@ view model =
                                 [ text "Checking connection..." ]
                             , text "("
                             , span [ id "username" ]
-                                [ text model.queryParams ]
+                                [ text model.username ]
                             , text " | "
                             , a [ class "text-info", href "index.html" ]
                                 [ text "Logout" ]
@@ -84,7 +91,7 @@ view model =
                             [ p []
                                 [ text "Chat client listening on port "
                                 , span [ id "port" ]
-                                    []
+                                    [ text model.activePort ]
                                 ]
                             ]
                         ]
@@ -96,7 +103,7 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    locationSearch LocationSearch
+    Sub.batch [ activePort ActivePort, username Username ]
 
 
 main : Program () Model Msg
