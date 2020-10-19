@@ -1,5 +1,6 @@
 _test_scripts: &_test_scripts
   script:
+    - yarn global add elm elm-format elm-test
     - yarn build
 
 cache:
