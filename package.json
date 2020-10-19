@@ -88,8 +88,9 @@
   },
   "lint-staged": {
     "src/**/*.js": "eslint --fix",
-    "src/**/*.{css,js,json,html,hbs}": [
-      "prettier --write --parser glimmer"
+    "src/**/*.hbs": "prettier --write --parser glimmer",
+    "src/**/*.{css,js,json,html}": [
+      "prettier --write"
     ]
   }
 }

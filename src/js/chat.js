@@ -1,6 +1,8 @@
 import './common';
 import incomingMessageTemplate from './templates/incomingMsg.hbs';
 import incomingUserAvatar from '../images/avatar1.png';
+import chatUserTemplate from './templates/chatUser.hbs';
+import User from './models/user';
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -11,6 +13,7 @@ const usernameElement = document.getElementById('username');
 const portElement = document.getElementById('port');
 const connectionElement = document.getElementById('connection-status');
 const chatboxElement = document.getElementById('chatbox');
+const usersListElement = document.getElementById('users-list');
 
 usernameElement.innerText = username;
 portElement.innerText = port;
@@ -43,6 +46,13 @@ const connect = () => {
 
   webSocket.onmessage = (event) => {
     const { user, content } = JSON.parse(event.data);
+    if (!User.exists(user)) {
+      usersListElement.insertAdjacentHTML(
+        'beforeend',
+        chatUserTemplate({ avatar: incomingUserAvatar, username: user }),
+      );
+    }
+
     chatboxElement.insertAdjacentHTML(
       'beforeend',
       incomingMessageTemplate({
