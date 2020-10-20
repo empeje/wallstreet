@@ -6,6 +6,7 @@ import Html exposing (Html, a, div, p, section, small, span, text, textarea)
 import Html.Attributes exposing (class, href, id, name, placeholder)
 import Json.Decode as Decode exposing (Error)
 import Task
+import Templates.ChatUser as ChatUserView
 import Templates.IncomingMsg as IncomingMessageView
 import Time exposing (Weekday(..))
 import Time.Extra exposing (toDateString)
@@ -33,6 +34,7 @@ type alias Model =
     , username : String
     , connectionStatus : String
     , count : Int
+    , users : List String
     , messages : List Message
     , time : Time.Posix
     , zone : Time.Zone
@@ -45,6 +47,7 @@ init _ =
       , username = ""
       , connectionStatus = "Waiting for connection..."
       , count = 0
+      , users = []
       , messages = []
       , time = Time.millisToPosix 0
       , zone = Time.utc
@@ -92,8 +95,15 @@ update msg model =
 
                         messageWithTimestamp =
                             { value | dateString = dateString }
+
+                        newUsers =
+                            if not (List.member value.username model.users) then
+                                List.append model.users [ value.username ]
+
+                            else
+                                model.users
                     in
-                    ( { model | messages = List.append model.messages [ messageWithTimestamp ] }, jumpToBottom "chatbox" )
+                    ( { model | messages = List.append model.messages [ messageWithTimestamp ], users = newUsers }, jumpToBottom "chatbox" )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -144,7 +154,7 @@ view model =
                                 , div [ class "col-md-3" ]
                                     [ div [ class "chat-users" ]
                                         [ div [ class "users-list", id "users-list" ]
-                                            []
+                                            (List.map (\user -> ChatUserView.template user) model.users)
                                         ]
                                     ]
                                 ]

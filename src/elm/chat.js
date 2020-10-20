@@ -14,8 +14,8 @@ const connect = () => {
   const webSocket = new WebSocket(`ws://localhost:${port}`);
 
   webSocket.onopen = () => {
-    app.ports.connectionStatus.send('Connected');
     localStorage.setItem('loggedIn', 'true');
+    app.ports.connectionStatus.send('Connected');
   };
 
   webSocket.onerror = () => {
