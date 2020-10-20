@@ -3,11 +3,13 @@ port module Chat exposing (activePort, connectionStatus, main, messageReceiver, 
 import Browser
 import Browser.Dom as Dom
 import Html exposing (Html, a, div, p, section, small, span, text, textarea)
-import Html.Attributes exposing (class, href, id, name, placeholder)
+import Html.Attributes exposing (class, href, id, name, placeholder, value)
+import Html.Events exposing (on, onInput)
 import Json.Decode as Decode exposing (Error)
 import Task
 import Templates.ChatUser as ChatUserView
 import Templates.IncomingMsg as IncomingMessageView
+import Templates.OutgoingMsg as OutgoingMessageView
 import Time exposing (Weekday(..))
 import Time.Extra exposing (toDateString)
 import Types.Message as Message exposing (Message)
@@ -34,6 +36,7 @@ type alias Model =
     , username : String
     , connectionStatus : String
     , count : Int
+    , newOutgoingMessage : String
     , users : List String
     , messages : List Message
     , time : Time.Posix
@@ -47,6 +50,7 @@ init _ =
       , username = ""
       , connectionStatus = "Waiting for connection..."
       , count = 0
+      , newOutgoingMessage = ""
       , users = []
       , messages = []
       , time = Time.millisToPosix 0
@@ -63,6 +67,8 @@ type Msg
     | Username String
     | MessageReceiver Decode.Value
     | ConnectionStatus String
+    | NewOutgoingMessage String
+    | SendMessage
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
     | NoOp
@@ -108,6 +114,28 @@ update msg model =
                 Err _ ->
                     ( model, Cmd.none )
 
+        NewOutgoingMessage val ->
+            ( { model | newOutgoingMessage = val }, Cmd.none )
+
+        SendMessage ->
+            let
+                { newOutgoingMessage } =
+                    model
+
+                newMessages =
+                    List.append model.messages
+                        [ Message.newOutgoing
+                            model.username
+                            newOutgoingMessage
+                            ""
+                            "https://bootdey.com/img/Content/avatar/avatar1.png"
+                        ]
+
+                newModel =
+                    { model | newOutgoingMessage = "", messages = newMessages }
+            in
+            ( newModel, Cmd.none )
+
         Tick newTime ->
             ( { model | time = newTime }
             , Cmd.none
@@ -146,7 +174,11 @@ view model =
                                     [ div [ class "chat-discussion", id "chatbox" ]
                                         (List.map
                                             (\message ->
-                                                IncomingMessageView.template message
+                                                if Message.isIncoming message then
+                                                    IncomingMessageView.template message
+
+                                                else
+                                                    OutgoingMessageView.template message
                                             )
                                             model.messages
                                         )
@@ -162,7 +194,15 @@ view model =
                                 [ div [ class "col-lg-12" ]
                                     [ div [ class "chat-message-form" ]
                                         [ div [ class "form-group" ]
-                                            [ textarea [ class "form-control message-input", id "new-message", name "message", placeholder "Enter message text and press enter" ]
+                                            [ textarea
+                                                [ class "form-control message-input"
+                                                , id "new-message"
+                                                , value model.newOutgoingMessage
+                                                , name "message"
+                                                , placeholder "Enter message text and press enter"
+                                                , onInput NewOutgoingMessage
+                                                , onEnter SendMessage
+                                                ]
                                                 []
                                             ]
                                         ]
@@ -204,8 +244,26 @@ main =
         }
 
 
+
+-- HELPERS
+
+
 jumpToBottom : String -> Cmd Msg
 jumpToBottom id =
     Dom.getViewportOf id
         |> Task.andThen (\info -> Dom.setViewportOf id 0 info.scene.height)
         |> Task.attempt (\_ -> NoOp)
+
+
+onEnter : msg -> Html.Attribute msg
+onEnter msg =
+    let
+        isEnterKey keyCode =
+            if keyCode == 13 then
+                Decode.succeed msg
+
+            else
+                Decode.fail "silent failure :)"
+    in
+    on "keyup" <|
+        Decode.andThen isEnterKey Html.Events.keyCode
