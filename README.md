@@ -26,5 +26,7 @@ yarn start:ws:docker
 2. Yarn local setup
 
 ```bash
-yarn start
+yarn start # this is the JS version
+
+env RUNTIME=elm yarn start # this is the Elm version
 ```
