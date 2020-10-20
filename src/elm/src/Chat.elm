@@ -1,4 +1,4 @@
-port module Chat exposing (activePort, main, messageReceiver, username)
+port module Chat exposing (activePort, connectionStatus, main, messageReceiver, username)
 
 import Browser
 import Html exposing (Html, a, div, p, section, small, span, text, textarea)
@@ -24,14 +24,25 @@ port username : (String -> msg) -> Sub msg
 port messageReceiver : (Decode.Value -> msg) -> Sub msg
 
 
+port connectionStatus : (String -> msg) -> Sub msg
+
+
 type alias Model =
-    { activePort : String, username : String, count : Int, messages : List Message, time : Time.Posix, zone : Time.Zone }
+    { activePort : String
+    , username : String
+    , connectionStatus : String
+    , count : Int
+    , messages : List Message
+    , time : Time.Posix
+    , zone : Time.Zone
+    }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { activePort = ""
       , username = ""
+      , connectionStatus = "Waiting for connection..."
       , count = 0
       , messages = []
       , time = Time.millisToPosix 0
@@ -47,6 +58,7 @@ type Msg
     | ActivePort String
     | Username String
     | MessageReceiver Decode.Value
+    | ConnectionStatus String
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
 
@@ -65,6 +77,9 @@ update msg model =
 
         Username val ->
             ( { model | username = val }, Cmd.none )
+
+        ConnectionStatus val ->
+            ( { model | connectionStatus = val }, Cmd.none )
 
         MessageReceiver val ->
             case Message.decode val of
@@ -101,7 +116,7 @@ view model =
                     [ div [ class "ibox chat-view" ]
                         [ div [ class "ibox-title text-muted" ]
                             [ small [ class "pull-right", id "connection-status" ]
-                                [ text "Checking connection..." ]
+                                [ text model.connectionStatus ]
                             , text "("
                             , span [ id "username" ]
                                 [ text model.username ]
@@ -160,6 +175,7 @@ subscriptions _ =
         , username Username
         , messageReceiver MessageReceiver
         , Time.every 1000 Tick
+        , connectionStatus ConnectionStatus
         ]
 
 
