@@ -1,6 +1,7 @@
 port module Chat exposing (activePort, connectionStatus, main, messageReceiver, username)
 
 import Browser
+import Browser.Dom as Dom
 import Html exposing (Html, a, div, p, section, small, span, text, textarea)
 import Html.Attributes exposing (class, href, id, name, placeholder)
 import Json.Decode as Decode exposing (Error)
@@ -61,6 +62,7 @@ type Msg
     | ConnectionStatus String
     | Tick Time.Posix
     | AdjustTimeZone Time.Zone
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -91,7 +93,7 @@ update msg model =
                         messageWithTimestamp =
                             { value | dateString = dateString }
                     in
-                    ( { model | messages = List.append model.messages [ messageWithTimestamp ] }, Cmd.none )
+                    ( { model | messages = List.append model.messages [ messageWithTimestamp ] }, jumpToBottom "chatbox" )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -105,6 +107,9 @@ update msg model =
             ( { model | zone = newZone }
             , Cmd.none
             )
+
+        NoOp ->
+            ( model, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -187,3 +192,10 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+
+
+jumpToBottom : String -> Cmd Msg
+jumpToBottom id =
+    Dom.getViewportOf id
+        |> Task.andThen (\info -> Dom.setViewportOf id 0 info.scene.height)
+        |> Task.attempt (\_ -> NoOp)
