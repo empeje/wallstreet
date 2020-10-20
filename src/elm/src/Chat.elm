@@ -137,7 +137,7 @@ update msg model =
                 newModel =
                     { model | newOutgoingMessage = "", messages = newMessages }
             in
-            ( newModel, sendMessage model.newOutgoingMessage )
+            ( newModel, Cmd.batch [ sendMessage model.newOutgoingMessage, jumpToBottom "chatbox" ] )
 
         Tick newTime ->
             ( { model | time = newTime }
