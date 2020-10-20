@@ -13,6 +13,11 @@ app.ports.username.send(username);
 const connect = () => {
   const webSocket = new WebSocket(`ws://localhost:${port}`);
 
+  app.ports.sendMessage.subscribe((content) => {
+    const message = JSON.stringify({ content, username });
+    webSocket.send(message);
+  });
+
   webSocket.onopen = () => {
     localStorage.setItem('loggedIn', 'true');
     app.ports.connectionStatus.send('Connected');

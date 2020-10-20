@@ -31,6 +31,9 @@ port messageReceiver : (Decode.Value -> msg) -> Sub msg
 port connectionStatus : (String -> msg) -> Sub msg
 
 
+port sendMessage : String -> Cmd msg
+
+
 type alias Model =
     { activePort : String
     , username : String
@@ -134,7 +137,7 @@ update msg model =
                 newModel =
                     { model | newOutgoingMessage = "", messages = newMessages }
             in
-            ( newModel, Cmd.none )
+            ( newModel, sendMessage model.newOutgoingMessage )
 
         Tick newTime ->
             ( { model | time = newTime }
